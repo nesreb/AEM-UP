@@ -17,8 +17,8 @@ Vagrant.configure(2) do |config|
 
     config.vm.provider "virtualbox" do |vb|
         # AEM recomments at least 1920 mb to work properly
-        vb.memory = "5000"
-        vb.cpus = 2
+        vb.memory = "8000"
+        vb.cpus = 4
     end
     
     # Disable default rsync folder and setup new one
@@ -32,10 +32,10 @@ Vagrant.configure(2) do |config|
     config.vm.network "private_network", ip: "192.168.99.44"
 
     # Ports Forwarding  
-    config.vm.network "forwarded_port", guest: 4602, host: 4602
-    config.vm.network "forwarded_port", guest: 4603, host: 4603
-    config.vm.network "forwarded_port", guest: 80, host: 4604
-    config.vm.network "forwarded_port", guest: 8080, host: 4605
+    config.vm.network "forwarded_port", guest: 4502, host: 4502
+    config.vm.network "forwarded_port", guest: 4503, host: 4503
+    config.vm.network "forwarded_port", guest: 80, host: 4504
+    config.vm.network "forwarded_port", guest: 8080, host: 4505
 
     # Run ansible playbook
     config.vm.provision "ansible" do |ansible|

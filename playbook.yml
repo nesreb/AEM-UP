@@ -3,7 +3,7 @@
 
   vars:
     # CONFIGURE THIS:
-    aem_jar_name: "cq-quickstart-6.4.0.jar" # The AEM JAR file name in /user-provided
+    aem_jar_name: "cq-quickstart-6.3.0.jar" # The AEM JAR file name in /user-provided
     # The dispatcher module file name in /user-provided.
     # Make sure you have the uncompressed `.so` file in /user-provided (not the zipped `.gz` file)
     dispatcher_module_name: "dispatcher-apache2.4-4.2.3.so"
@@ -12,9 +12,9 @@
 
     # Ports on VM
     # NOTE: To change ports on your localhost, change them in Vagrantfile
-    aem_author_port: 4602
-    aem_publish_port: 4603
-    aem_dispatcher_port: 4604
+    aem_author_port: 4502
+    aem_publish_port: 4503
+    aem_dispatcher_port: 4504
     
     # Configurations that may or may not need to be modified somewhere else :)
     # Absolute paths to AEM folders on the VM
@@ -93,12 +93,27 @@
         mode: u=rwx,g=rwx,o=rwx # dev box, remember :)
       with_items: [aem-publish, aem-author, tailon]
 
-    - name: Start the systemd AEM deamon for author and publish
-      systemd: name="{{item}}.service" state=started enabled=yes daemon_reload=yes no_block=yes
+    - name: Start the systemd AEM daemon for publish
+      systemd:
+        name: aem-publish.service
+        state: started
+        enabled: yes
+        daemon_reload: yes
+        no_block: yes
+        masked: no
       async: 400
       poll: 10
-      with_items: [aem-publish, aem-author]
 
+    - name: Start the systemd AEM daemon for author
+      systemd:
+        name: aem-author.service
+        state: started
+        enabled: yes
+        daemon_reload: yes
+        no_block: yes
+        masked: no
+      async: 400
+      poll: 10
 
     - name: Copy dispatcher module to apache
       tags: aem_dispatcher
@@ -143,7 +158,7 @@
       file: dest=/usr/bin/tailon mode=01777 # dev box, remember :)
 
     # for now, this service only starts tailon serever
-    - name: Start the systemd AEM deamon for tailon 4605
+    - name: Start the systemd AEM daemon for tailon 4605 (or custom port)
       tags: tailon
       systemd: name="tailon.service" state=restarted enabled=yes daemon_reload=yes no_block=yes
       async: 0
